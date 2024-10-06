@@ -3,15 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>discord high speed sender</title>
+    <title>discord nuker</title>
     <style>
       body {
         font-family: Arial, sans-serif;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
+        min-height: 100vh;
         margin: 0;
+        padding: 0;
+        box-sizing: border-box;
         transition: background-color 0.3s, color 0.3s;
       }
       .container {
@@ -19,10 +21,13 @@
         padding: 2rem;
         border-radius: 10px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
         transition: background-color 0.3s;
       }
       h1 {
         margin-top: 0;
+        text-align: center;
       }
       input,
       button {
@@ -31,6 +36,15 @@
         margin-bottom: 1rem;
         border: 1px solid #ccc;
         border-radius: 4px;
+        box-sizing: border-box;
+      }
+      .input-group {
+        display: flex;
+        align-items: center;
+      }
+      .input-group input {
+        flex: 1;
+        margin-right: 0.5rem;
       }
       button {
         background-color: transparent;
@@ -50,6 +64,9 @@
         top: 1rem;
         right: 1rem;
       }
+      .hidden {
+        display: none;
+      }
       body.dark-theme {
         background-color: #00001c;
         color: #dcddde;
@@ -66,19 +83,33 @@
         text-align: center;
         margin-top: 1rem;
       }
+      @media (max-width: 600px) {
+        .container {
+          padding: 1.5rem;
+        }
+        input, button {
+          padding: 0.5rem;
+        }
+      }
     </style>
   </head>
   <body>
     <button id="themeToggle">Toggle Theme</button>
     <div class="container">
-      <h1>discord high speed sender</h1>
+      <h1>discord nuker</h1>
       <form id="discordForm">
-        <input
-          type="text"
-          id="token"
-          placeholder="Enter your Discord token"
-          required
-        />
+        <div class="input-group">
+          <input
+            type="text"
+            id="token"
+            placeholder="Enter your Discord token"
+            required
+          />
+          <button id="verifyToken" type="button">Verify</button>
+        </div>
+        <div id="tokenCheck" class="hidden">
+          <p id="tokenStatus">Checking token...</p>
+        </div>
         <input
           type="text"
           id="channelId"
@@ -93,7 +124,7 @@
         <input
           type="text"
           id="message"
-          value="@everyone @here あーどうも黒乃秋斗(くろのあきと)です。･･･てかただの 受験に追われてる中学三年生です･･････はぁ忙しくて 青春もクソもないなぁとまぁただの中学生である。 まぁ強いて言えば親が勉強勉強うるせーし兄からも 最近 嫌われてる気がしてどうも肩身が狭い狭い･･････ 話聞いてくれるやつなんて紅月くらいだよなぁ･･･ いっつもなんか絡まれてる時には 助けてくれるしほんとに良い奴なんだよな。･･･いっつも 助けて貰ってるしお返しになんか買ってやった方が いいかな･･･昼飯でも奢るか。 「おーい黒乃なに 突っ立ってんだよ遅れるぞー」"
+          value="@everyone Message text goes here"
           required
         />
         <input
@@ -116,6 +147,31 @@
         .getElementById("themeToggle")
         .addEventListener("click", function () {
           document.body.classList.toggle("dark-theme");
+        });
+
+      // Show token check on button click
+      document
+        .getElementById("verifyToken")
+        .addEventListener("click", function () {
+          const tokenCheckDiv = document.getElementById("tokenCheck");
+          tokenCheckDiv.classList.remove("hidden");
+
+          const token = document.getElementById("token").value;
+
+          fetch("/api/discord", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              document.getElementById("tokenStatus").textContent =
+                data.id ? "Token is valid!" : "Invalid token.";
+            })
+            .catch(() => {
+              document.getElementById("tokenStatus").textContent =
+                "Error verifying token.";
+            });
         });
 
       document
@@ -176,3 +232,4 @@
     </script>
   </body>
 </html>
+

@@ -3,85 +3,93 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>discord nuker</title>
+    <title>Discord Nuker</title>
     <style>
       body {
-        font-family: Arial, sans-serif;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         display: flex;
         justify-content: center;
         align-items: center;
         min-height: 100vh;
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
+        background-color: #202225;
+        color: #dcddde;
         transition: background-color 0.3s, color 0.3s;
+        cursor: url('https://www.w3schools.com/html/hand.cur'), auto;
       }
       .container {
-        background-color: #f0f0f0;
+        background-color: #2f3136;
         padding: 2rem;
         border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         max-width: 400px;
         width: 100%;
-        transition: background-color 0.3s;
+        position: relative;
+        transition: transform 0.3s ease;
+      }
+      .container:hover {
+        transform: translateY(-5px);
       }
       h1 {
         margin-top: 0;
         text-align: center;
+        font-size: 2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+      }
+      h1 img {
+        width: 48px;
+        height: 48px;
+        margin-right: 10px;
+      }
+      @keyframes typing {
+        from { width: 0; }
+        to { width: 100%; }
+      }
+      @keyframes blink-caret {
+        from, to { border-color: transparent; }
+        50% { border-color: #7289da; }
+      }
+      .typing-effect {
+        font-family: 'Courier New', Courier, monospace;
+        white-space: nowrap;
+        overflow: hidden;
+        border-right: 3px solid #7289da;
+        width: 0;
+        animation: typing 2s steps(30, end), blink-caret 0.5s step-end infinite;
       }
       input,
       button {
         width: 100%;
-        padding: 0.5rem;
+        padding: 0.7rem;
         margin-bottom: 1rem;
         border: 1px solid #ccc;
         border-radius: 4px;
-        box-sizing: border-box;
+        background-color: #40444b;
+        color: #dcddde;
+        transition: border-color 0.3s;
       }
-      .input-group {
-        display: flex;
-        align-items: center;
-      }
-      .input-group input {
-        flex: 1;
-        margin-right: 0.5rem;
+      input:focus {
+        border-color: #7289da;
+        outline: none;
       }
       button {
         background-color: transparent;
         color: inherit;
         border: 1px solid #7289da;
-        border-radius: 50px;
-        padding: 0.5rem 1.5rem;
         cursor: pointer;
-        transition: background-color 0.3s, border-color 0.3s;
       }
       button:hover {
         background-color: #7289da;
         color: white;
       }
-      #themeToggle {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-      }
-      .hidden {
-        display: none;
-      }
-      body.dark-theme {
-        background-color: #00001c;
-        color: #dcddde;
-      }
-      body.dark-theme .container {
-        background-color: #2f3136;
-      }
-      body.dark-theme input {
-        background-color: #40444b;
-        color: #dcddde;
-        border-color: #202225;
-      }
       footer {
         text-align: center;
         margin-top: 1rem;
+        color: #72767d;
       }
       @media (max-width: 600px) {
         .container {
@@ -91,12 +99,23 @@
           padding: 0.5rem;
         }
       }
+      /* Cursor animation */
+      @keyframes cursorMove {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-3px); }
+      }
+      body {
+        animation: cursorMove 1s infinite;
+      }
     </style>
   </head>
   <body>
     <button id="themeToggle">Toggle Theme</button>
     <div class="container">
-      <h1>discord nuker</h1>
+      <h1>
+        <img src="https://cdn.discordapp.com/attachments/1279032270715621376/1292452256892977204/IMG_6122_waifu2x_photo_noise3.png?ex=6703c976&is=670277f6&hm=cc9e0e72dd33cfb4d9af09d24bfa8c9c71cd904cd71889b1917c8939ed19a5ff&" alt="icon" />
+        <span class="typing-effect">discord nuker</span>
+      </h1>
       <form id="discordForm">
         <div class="input-group">
           <input
@@ -124,7 +143,6 @@
         <input
           type="text"
           id="message"
-          value="@everyone @here あーどうも黒乃秋斗(くろのあきと)です。･･･てかただの 受験に追われてる中学三年生です･･････はぁ忙しくて 青春もクソもないなぁとまぁただの中学生である。 まぁ強いて言えば親が勉強勉強うるせーし兄からも 最近 嫌われてる気がしてどうも肩身が狭い狭い･･････ 話聞いてくれるやつなんて紅月くらいだよなぁ･･･ いっつもなんか絡まれてる時には 助けてくれるしほんとに良い奴なんだよな。･･･いっつも 助けて貰ってるしお返しになんか買ってやった方が いいかな･･･昼飯でも奢るか。 「おーい黒乃なに 突っ立ってんだよ遅れるぞー」"
           required
         />
         <input
@@ -149,7 +167,6 @@
           document.body.classList.toggle("dark-theme");
         });
 
-      // Show token check on button click
       document
         .getElementById("verifyToken")
         .addEventListener("click", function () {
@@ -232,4 +249,3 @@
     </script>
   </body>
 </html>
-

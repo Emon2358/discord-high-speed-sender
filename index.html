@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>discord high speed sender</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        transition: background-color 0.3s, color 0.3s;
+      }
+      .container {
+        background-color: #f0f0f0;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s;
+      }
+      h1 {
+        margin-top: 0;
+      }
+      input,
+      button {
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        background-color: transparent;
+        color: inherit;
+        border: 1px solid #7289da;
+        border-radius: 50px;
+        padding: 0.5rem 1.5rem;
+        cursor: pointer;
+        transition: background-color 0.3s, border-color 0.3s;
+      }
+      button:hover {
+        background-color: #7289da;
+        color: white;
+      }
+      #themeToggle {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+      }
+      body.dark-theme {
+        background-color: #00001c;
+        color: #dcddde;
+      }
+      body.dark-theme .container {
+        background-color: #2f3136;
+      }
+      body.dark-theme input {
+        background-color: #40444b;
+        color: #dcddde;
+        border-color: #202225;
+      }
+      footer {
+        text-align: center;
+        margin-top: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="themeToggle">Toggle Theme</button>
+    <div class="container">
+      <h1>discord high speed sender</h1>
+      <form id="discordForm">
+        <input
+          type="text"
+          id="token"
+          placeholder="Enter your Discord token"
+          required
+        />
+        <input
+          type="text"
+          id="channelId"
+          placeholder="Enter channel ID"
+          required
+        />
+        <input
+          type="text"
+          id="webhookUrl"
+          placeholder="Enter Webhook URL (optional)"
+        />
+        <input
+          type="text"
+          id="message"
+          value="@everyone @here あーどうも黒乃秋斗(くろのあきと)です。･･･てかただの 受験に追われてる中学三年生です･･････はぁ忙しくて 青春もクソもないなぁとまぁただの中学生である。 まぁ強いて言えば親が勉強勉強うるせーし兄からも 最近 嫌われてる気がしてどうも肩身が狭い狭い･･････ 話聞いてくれるやつなんて紅月くらいだよなぁ･･･ いっつもなんか絡まれてる時には 助けてくれるしほんとに良い奴なんだよな。･･･いっつも 助けて貰ってるしお返しになんか買ってやった方が いいかな･･･昼飯でも奢るか。 「おーい黒乃なに 突っ立ってんだよ遅れるぞー」"
+          required
+        />
+        <input
+          type="number"
+          id="count"
+          placeholder="Number of messages to send"
+          required
+          min="1"
+          value="1"
+        />
+        <button type="submit">Send Messages</button>
+      </form>
+      <footer>created by emon2358</footer>
+    </div>
+
+    <script>
+      let isProcessing = false;
+
+      document
+        .getElementById("themeToggle")
+        .addEventListener("click", function () {
+          document.body.classList.toggle("dark-theme");
+        });
+
+      document
+        .getElementById("discordForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          if (isProcessing) return;
+          isProcessing = true;
+
+          const token = document.getElementById("token").value;
+          const channelId = document.getElementById("channelId").value;
+          const webhookUrl = document.getElementById("webhookUrl").value;
+          const message = document.getElementById("message").value;
+          const count = parseInt(document.getElementById("count").value);
+
+          const sendMessage = async () => {
+            const sendPromises = Array.from({ length: count }, () =>
+              fetch("/api/discord/send", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  token,
+                  channelId,
+                  message,
+                }),
+              })
+            );
+            await Promise.all(sendPromises);
+          };
+
+          const sendWebhook = async () => {
+            const sendPromises = Array.from({ length: count }, () =>
+              fetch(webhookUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  content: message,
+                }),
+              })
+            );
+            await Promise.all(sendPromises);
+          };
+
+          try {
+            if (webhookUrl) {
+              await sendWebhook();
+            } else {
+              await sendMessage();
+            }
+            alert(`${count} messages successfully sent!`);
+          } catch (error) {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again.");
+          } finally {
+            isProcessing = false;
+          }
+        });
+    </script>
+  </body>
+</html>

@@ -15,21 +15,33 @@
         padding: 0;
         background-color: #202225;
         color: #dcddde;
-        transition: background-color 0.3s, color 0.3s;
         cursor: url('https://www.w3schools.com/html/hand.cur'), auto;
       }
       .container {
+        display: flex;
         background-color: #2f3136;
         padding: 2rem;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        max-width: 400px;
+        max-width: 600px;
         width: 100%;
         position: relative;
         transition: transform 0.3s ease;
       }
       .container:hover {
         transform: translateY(-5px);
+      }
+      .left-image {
+        flex: 1;
+        margin-right: 20px;
+      }
+      .left-image img {
+        width: 150px;
+        height: auto;
+        border-radius: 10px;
+      }
+      .content {
+        flex: 2;
       }
       h1 {
         margin-top: 0;
@@ -44,10 +56,14 @@
         width: 48px;
         height: 48px;
         margin-right: 10px;
+        border-radius: 50%;
+        border: 2px solid #7289da;
       }
       @keyframes typing {
-        from { width: 0; }
-        to { width: 100%; }
+        0% { width: 0; }
+        50% { width: 100%; }
+        90% { width: 100%; }
+        100% { width: 0; }
       }
       @keyframes blink-caret {
         from, to { border-color: transparent; }
@@ -59,7 +75,7 @@
         overflow: hidden;
         border-right: 3px solid #7289da;
         width: 0;
-        animation: typing 2s steps(30, end), blink-caret 0.5s step-end infinite;
+        animation: typing 3s steps(30, end) infinite, blink-caret 0.75s step-end infinite;
       }
       input,
       button {
@@ -70,7 +86,6 @@
         border-radius: 4px;
         background-color: #40444b;
         color: #dcddde;
-        transition: border-color 0.3s;
       }
       input:focus {
         border-color: #7289da;
@@ -93,79 +108,72 @@
       }
       @media (max-width: 600px) {
         .container {
-          padding: 1.5rem;
+          flex-direction: column;
+          align-items: center;
         }
-        input, button {
-          padding: 0.5rem;
+        .left-image {
+          margin-right: 0;
+          margin-bottom: 20px;
         }
-      }
-      /* Cursor animation */
-      @keyframes cursorMove {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-3px); }
-      }
-      body {
-        animation: cursorMove 1s infinite;
       }
     </style>
   </head>
   <body>
-    <button id="themeToggle">Toggle Theme</button>
     <div class="container">
-      <h1>
-        <img src="https://cdn.discordapp.com/attachments/1279032270715621376/1292452256892977204/IMG_6122_waifu2x_photo_noise3.png?ex=6703c976&is=670277f6&hm=cc9e0e72dd33cfb4d9af09d24bfa8c9c71cd904cd71889b1917c8939ed19a5ff&" alt="icon" />
-        <span class="typing-effect">discord nuker</span>
-      </h1>
-      <form id="discordForm">
-        <div class="input-group">
+      <div class="left-image">
+        <img src="https://i.pinimg.com/564x/c3/67/f7/c367f76a9c513e875f76049475cbc872.jpg" alt="Left image" />
+      </div>
+      <div class="content">
+        <h1>
+          <img src="https://cdn.discordapp.com/attachments/1279032270715621376/1292452256892977204/IMG_6122_waifu2x_photo_noise3.png?ex=6703c976&is=670277f6&hm=cc9e0e72dd33cfb4d9af09d24bfa8c9c71cd904cd71889b1917c8939ed19a5ff&" alt="icon" />
+          <span class="typing-effect">discord nuker</span>
+        </h1>
+        <form id="discordForm">
+          <div class="input-group">
+            <input
+              type="text"
+              id="token"
+              placeholder="Enter your Discord token"
+              required
+            />
+            <button id="verifyToken" type="button">Verify</button>
+          </div>
+          <div id="tokenCheck" class="hidden">
+            <p id="tokenStatus">Checking token...</p>
+          </div>
           <input
             type="text"
-            id="token"
-            placeholder="Enter your Discord token"
+            id="channelId"
+            placeholder="Enter channel ID"
             required
           />
-          <button id="verifyToken" type="button">Verify</button>
-        </div>
-        <div id="tokenCheck" class="hidden">
-          <p id="tokenStatus">Checking token...</p>
-        </div>
-        <input
-          type="text"
-          id="channelId"
-          placeholder="Enter channel ID"
-          required
-        />
-        <input
-          type="text"
-          id="webhookUrl"
-          placeholder="Enter Webhook URL (optional)"
-        />
-        <input
-          type="text"
-          id="message"
-          required
-        />
-        <input
-          type="number"
-          id="count"
-          placeholder="Number of messages to send"
-          required
-          min="1"
-          value="1"
-        />
-        <button type="submit">Send Messages</button>
-      </form>
-      <footer>created by emon2358</footer>
+          <input
+            type="text"
+            id="webhookUrl"
+            placeholder="Enter Webhook URL (optional)"
+          />
+          <input
+            type="text"
+            id="message"
+            placeholder="Enter your message"
+            required
+          />
+          <input
+            type="number"
+            id="count"
+            placeholder="Number of messages to send"
+            required
+            min="1"
+            value="1"
+          />
+          <button type="submit">Send Messages</button>
+        </form>
+        <footer>created by emon2358</footer>
+      </div>
     </div>
 
     <script>
       let isProcessing = false;
-
-      document
-        .getElementById("themeToggle")
-        .addEventListener("click", function () {
-          document.body.classList.toggle("dark-theme");
-        });
 
       document
         .getElementById("verifyToken")

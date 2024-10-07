@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Discord Nuker</title>
+    <title>Discord Message Sender</title>
     <style>
       body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -17,31 +17,53 @@
         color: #dcddde;
         cursor: url('https://www.w3schools.com/html/hand.cur'), auto;
       }
+
       .container {
         display: flex;
         background-color: #2f3136;
         padding: 2rem;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        max-width: 600px;
+        max-width: 800px;
         width: 100%;
         position: relative;
         transition: transform 0.3s ease;
+        justify-content: space-between;
       }
       .container:hover {
         transform: translateY(-5px);
       }
-      .left-image {
-        flex: 1;
-        margin-right: 20px;
+      .left-content {
+        display: flex;
+        align-items: center;
+        gap: 20px;
       }
-      .left-image img {
-        width: 150px;
+
+      .profile-image {
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        animation: rotate 4s linear infinite;
+      }
+
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .portrait-image {
+        width: 60px;
         height: auto;
-        border-radius: 10px;
       }
+
       .content {
         flex: 2;
+        width: 100%;
       }
       h1 {
         margin-top: 0;
@@ -52,30 +74,8 @@
         align-items: center;
         position: relative;
       }
-      h1 img {
-        width: 48px;
-        height: 48px;
-        margin-right: 10px;
-        border-radius: 50%;
-        border: 2px solid #7289da;
-      }
-      @keyframes typing {
-        0% { width: 0; }
-        50% { width: 100%; }
-        90% { width: 100%; }
-        100% { width: 0; }
-      }
-      @keyframes blink-caret {
-        from, to { border-color: transparent; }
-        50% { border-color: #7289da; }
-      }
-      .typing-effect {
-        font-family: 'Courier New', Courier, monospace;
-        white-space: nowrap;
-        overflow: hidden;
-        border-right: 3px solid #7289da;
-        width: 0;
-        animation: typing 3s steps(30, end) infinite, blink-caret 0.75s step-end infinite;
+      .input-group {
+        margin-bottom: 1rem;
       }
       input,
       button {
@@ -106,28 +106,57 @@
         margin-top: 1rem;
         color: #72767d;
       }
-      @media (max-width: 600px) {
-        .container {
-          flex-direction: column;
-          align-items: center;
+
+      /* Typing animation */
+      .typing-animation {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #7289da;
+        overflow: hidden;
+        white-space: nowrap;
+        border-right: 2px solid;
+        width: 12ch;
+        animation: typing 3s steps(12) infinite, blink 0.75s step-end infinite;
+      }
+
+      @keyframes typing {
+        0% {
+          width: 0ch;
         }
-        .left-image {
-          margin-right: 0;
-          margin-bottom: 20px;
+        50% {
+          width: 12ch;
+        }
+        100% {
+          width: 0ch;
+        }
+      }
+
+      @keyframes blink {
+        50% {
+          border-color: transparent;
         }
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <div class="left-image">
-        <img src="https://i.pinimg.com/564x/c3/67/f7/c367f76a9c513e875f76049475cbc872.jpg" alt="Left image" />
+      <!-- Left content for images -->
+      <div class="left-content">
+        <img
+          src="https://cdn.discordapp.com/attachments/1276191968543772732/1292439053190561833/IMG_6122_waifu2x_photo_noise3.png"
+          alt="Profile Icon"
+          class="profile-image"
+        />
+        <img
+          src="https://i.pinimg.com/564x/c3/67/f7/c367f76a9c513e875f76049475cbc872.jpg"
+          alt="Portrait"
+          class="portrait-image"
+        />
       </div>
+
+      <!-- Main content for form and title -->
       <div class="content">
-        <h1>
-          <img src="https://cdn.discordapp.com/attachments/1279032270715621376/1292452256892977204/IMG_6122_waifu2x_photo_noise3.png?ex=6703c976&is=670277f6&hm=cc9e0e72dd33cfb4d9af09d24bfa8c9c71cd904cd71889b1917c8939ed19a5ff&" alt="icon" />
-          <span class="typing-effect">discord nuker</span>
-        </h1>
+        <h1 class="typing-animation">Discord nuker</h1>
         <form id="discordForm">
           <div class="input-group">
             <input
@@ -136,125 +165,73 @@
               placeholder="Enter your Discord token"
               required
             />
-            <button id="verifyToken" type="button">Verify</button>
           </div>
-          <div id="tokenCheck" class="hidden">
-            <p id="tokenStatus">Checking token...</p>
+          <div class="input-group">
+            <input
+              type="text"
+              id="serverId"
+              placeholder="Enter the Discord server ID"
+              required
+            />
           </div>
-          <input
-            type="text"
-            id="channelId"
-            placeholder="Enter channel ID"
-            required
-          />
-          <input
-            type="text"
-            id="webhookUrl"
-            placeholder="Enter Webhook URL (optional)"
-          />
-          <input
-            type="text"
-            id="message"
-            placeholder="Enter your message"
-            required
-          />
-          <input
-            type="number"
-            id="count"
-            placeholder="Number of messages to send"
-            required
-            min="1"
-            value="1"
-          />
-          <button type="submit">Send Messages</button>
+          <div class="input-group">
+            <input
+              type="text"
+              id="message"
+              placeholder="Enter the message to send"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <input
+              type="number"
+              id="loopCount"
+              placeholder="Number of message loops"
+              min="1"
+              required
+            />
+          </div>
+          <button type="submit">nuke</button>
         </form>
         <footer>created by emon2358</footer>
       </div>
     </div>
 
     <script>
-      let isProcessing = false;
-
-      document
-        .getElementById("verifyToken")
-        .addEventListener("click", function () {
-          const tokenCheckDiv = document.getElementById("tokenCheck");
-          tokenCheckDiv.classList.remove("hidden");
-
-          const token = document.getElementById("token").value;
-
-          fetch("/api/discord", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token }),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              document.getElementById("tokenStatus").textContent =
-                data.id ? "Token is valid!" : "Invalid token.";
-            })
-            .catch(() => {
-              document.getElementById("tokenStatus").textContent =
-                "Error verifying token.";
-            });
-        });
-
       document
         .getElementById("discordForm")
         .addEventListener("submit", async function (e) {
           e.preventDefault();
-          if (isProcessing) return;
-          isProcessing = true;
 
           const token = document.getElementById("token").value;
-          const channelId = document.getElementById("channelId").value;
-          const webhookUrl = document.getElementById("webhookUrl").value;
+          const serverId = document.getElementById("serverId").value;
           const message = document.getElementById("message").value;
-          const count = parseInt(document.getElementById("count").value);
-
-          const sendMessage = async () => {
-            const sendPromises = Array.from({ length: count }, () =>
-              fetch("/api/discord/send", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  token,
-                  channelId,
-                  message,
-                }),
-              })
-            );
-            await Promise.all(sendPromises);
-          };
-
-          const sendWebhook = async () => {
-            const sendPromises = Array.from({ length: count }, () =>
-              fetch(webhookUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  content: message,
-                }),
-              })
-            );
-            await Promise.all(sendPromises);
-          };
+          const loopCount = parseInt(document.getElementById("loopCount").value);
 
           try {
-            if (webhookUrl) {
-              await sendWebhook();
+            const response = await fetch("/api/discord/send", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                token,
+                serverId,
+                message,
+                loopCount,
+              }),
+            });
+
+            if (response.ok) {
+              const result = await response.json();
+              console.log(result);
+              alert(`${loopCount} messages sent successfully!`);
             } else {
-              await sendMessage();
+              alert("Failed to send messages.");
             }
-            alert(`${count} messages successfully sent!`);
           } catch (error) {
             console.error("Error:", error);
-            alert("An error occurred. Please try again.");
-          } finally {
-            isProcessing = false;
+            alert("An error occurred while sending messages.");
           }
         });
     </script>
   </body>
 </html>
-

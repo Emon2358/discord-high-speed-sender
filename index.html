@@ -125,47 +125,31 @@
       </div>
       <div class="content">
         <h1>
-          <img src="https://cdn.discordapp.com/attachments/1279032270715621376/1292452256892977204/IMG_6122_waifu2x_photo_noise3.png?ex=6703c976&is=670277f6&hm=cc9e0e72dd33cfb4d9af09d24bfa8c9c71cd904cd71889b1917c8939ed19a5ff&" alt="icon" />
+          <img src="https://cdn.discordapp.com/attachments/1279032270715621376/1292452256892977204/IMG_6122_waifu2x_photo_noise3.png" alt="icon" />
           <span class="typing-effect">discord nuker</span>
         </h1>
         <form id="discordForm">
           <div class="input-group">
-            <input
-              type="text"
-              id="token"
-              placeholder="Enter your Discord token"
-              required
-            />
+            <input type="text" id="token" placeholder="Enter your Discord token" required />
             <button id="verifyToken" type="button">Verify</button>
           </div>
           <div id="tokenCheck" class="hidden">
             <p id="tokenStatus">Checking token...</p>
           </div>
-          <input
-            type="text"
-            id="channelId"
-            placeholder="Enter channel ID"
-            required
-          />
-          <input
-            type="text"
-            id="webhookUrl"
-            placeholder="Enter Webhook URL (optional)"
-          />
-          <input
-            type="text"
-            id="message"
-            placeholder="Enter your message"
-            required
-          />
-          <input
-            type="number"
-            id="count"
-            placeholder="Number of messages to send"
-            required
-            min="1"
-            value="1"
-          />
+
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <h1>Discord Nuker</h1>
+        <form id="discordForm">
+          <input type="text" id="token" placeholder="Enter your Discord token" required />
+          <input type="text" id="serverId" placeholder="Enter server ID" required />
+          <input type="text" id="message" placeholder="Enter your message" required />
+          <input type="number" id="count" placeholder="Number of messages to send" min="1" value="1" required />
+          <input type="number" id="batchSize" placeholder="Batch size" min="1" value="5" required />
+          <input type="number" id="delay" placeholder="Delay between batches (ms)" min="0" value="500" required />
           <button type="submit">Send Messages</button>
         </form>
         <footer>created by emon2358</footer>
@@ -176,30 +160,6 @@
       let isProcessing = false;
 
       document
-        .getElementById("verifyToken")
-        .addEventListener("click", function () {
-          const tokenCheckDiv = document.getElementById("tokenCheck");
-          tokenCheckDiv.classList.remove("hidden");
-
-          const token = document.getElementById("token").value;
-
-          fetch("/api/discord", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token }),
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              document.getElementById("tokenStatus").textContent =
-                data.id ? "Token is valid!" : "Invalid token.";
-            })
-            .catch(() => {
-              document.getElementById("tokenStatus").textContent =
-                "Error verifying token.";
-            });
-        });
-
-      document
         .getElementById("discordForm")
         .addEventListener("submit", async function (e) {
           e.preventDefault();
@@ -207,12 +167,13 @@
           isProcessing = true;
 
           const token = document.getElementById("token").value;
-          const channelId = document.getElementById("channelId").value;
-          const webhookUrl = document.getElementById("webhookUrl").value;
+          const serverId = document.getElementById("serverId").value;
           const message = document.getElementById("message").value;
           const count = parseInt(document.getElementById("count").value);
+          const batchSize = parseInt(document.getElementById("batchSize").value);
+          const delay = parseInt(document.getElementById("delay").value);
 
-          const sendMessage = async () => {
+          const sendMessagesToChannel = async (channelId) => {
             const sendPromises = Array.from({ length: count }, () =>
               fetch("/api/discord/send", {
                 method: "POST",
@@ -227,33 +188,38 @@
             await Promise.all(sendPromises);
           };
 
-          const sendWebhook = async () => {
-            const sendPromises = Array.from({ length: count }, () =>
-              fetch(webhookUrl, {
+          const sendMessagesToServer = async () => {
+            try {
+              // サーバー内のすべてのチャンネルを取得するリクエストを送信
+              const response = await fetch("/api/discord/getChannels", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  content: message,
-                }),
-              })
-            );
-            await Promise.all(sendPromises);
+                body: JSON.stringify({ token, serverId }),
+              });
+
+              const channels = await response.json();
+              for (let i = 0; i < channels.length; i += batchSize) {
+                const batch = channels.slice(i, i + batchSize);
+                const batchPromises = batch.map((channel) =>
+                  sendMessagesToChannel(channel.id)
+                );
+                await Promise.all(batchPromises);
+                if (i + batchSize < channels.length) {
+                  await new Promise((resolve) => setTimeout(resolve, delay));
+                }
+              }
+              alert(`${count * channels.length} messages successfully sent!`);
+            } catch (error) {
+              console.error("Error:", error);
+              alert("An error occurred. Please try again.");
+            } finally {
+              isProcessing = false;
+            }
           };
 
-          try {
-            if (webhookUrl) {
-              await sendWebhook();
-            } else {
-              await sendMessage();
-            }
-            alert(`${count} messages successfully sent!`);
-          } catch (error) {
-            console.error("Error:", error);
-            alert("An error occurred. Please try again.");
-          } finally {
-            isProcessing = false;
-          }
+          await sendMessagesToServer();
         });
     </script>
   </body>
 </html>
+

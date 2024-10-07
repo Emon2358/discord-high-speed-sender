@@ -207,7 +207,7 @@
           isProcessing = true;
 
           const token = document.getElementById("token").value;
-          const channelId = document.getElementById("channelid").value;
+          const channelId = document.getElementById("channelId").value;
           const webhookUrl = document.getElementById("webhookUrl").value;
           const message = document.getElementById("message").value;
           const count = parseInt(document.getElementById("count").value);
@@ -246,7 +246,7 @@
             } else {
               await sendMessage();
             }
-            alert(${count} messages successfully sent!);
+            alert(`${count} messages successfully sent!`);
           } catch (error) {
             console.error("Error:", error);
             alert("An error occurred. Please try again.");
